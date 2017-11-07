@@ -1,0 +1,115 @@
+#!/bin/bash
+echo "Enter the filename"
+read data
+temp=temp.sujay
+
+function createfile()
+{
+Roll='Roll_No_over'
+Name='Name'
+printf "%-20s %-20s\n" $Roll $Name >> $data
+echo "file successfully created!"
+return
+}
+
+insertdata()
+{
+echo "Enter Name"
+read name
+printf "%-20s %-20s\n" $1 $name >> $data
+return
+}
+
+displaydata()
+{
+cat $data
+return
+}
+
+modifydata()
+{
+grep -v -w $1 $data > $temp
+echo "Enter Name"
+read name
+printf "%-20s %-20s\n" $1 $name >> $temp
+cat $temp > $data
+echo modified
+return
+}
+
+deletedata()
+{
+grep -v $1 $data > $temp
+echo "Record has been deleted.."
+cat $temp > $data
+echo deleted successfully
+return
+}
+if [ -f $data ] 
+	then
+	echo "File already exists"
+	echo "over write? (y/n)"
+	read over
+	if [ $over == 'y' ]
+		then
+		echo -n > $data
+		createfile
+	
+	else
+	echo "continuing with existing file"
+	fi
+else
+	createfile
+fi
+
+while [ true ]
+do
+echo ""
+echo -e "Enter choice 1.insertdata\n 2.modifydata\n 3.deletedata\n 4.displaydata\n 5.exit"
+read choice
+case $choice in
+	1)
+	echo Enter roll no to be inserted
+	read roll
+	if ( grep -w $roll $data )
+	then
+	echo already exists
+	else
+	insertdata $roll
+
+		#statements
+	fi
+	;;
+	2)
+	echo Enter roll no to be modified
+	read roll
+	if ( grep -w $roll $data )
+		then
+		modifydata $roll
+		else
+		echo no such record
+		#statements
+	fi
+	;;
+	3)
+	echo Enter roll no to be deleted
+	read roll
+	if ( grep -w $roll $data )
+		then
+		deletedata $roll
+	else
+	echo no such record
+	fi
+	;;
+	4)
+	displaydata
+	;;
+	5)
+	echo bye
+	exit
+	;;
+	*)
+	echo invalid choice
+	;;
+esac
+done
